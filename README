@@ -1,0 +1,10 @@
+Draws a sigma on the screen, just like the older
+"sigma" example, but does so using multiple files
+compiled together.
+
+The program also demonstrates printing debugging
+information to stderr, so you may want to redirect
+stderr to a file for later viewing (or it may look
+weird on the screen).
+
+Read the Makefile, then compile using "make all"
