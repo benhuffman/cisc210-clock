@@ -1,120 +1,75 @@
 #include <stdio.h>
-#include <stdbool.h>
-//#include "display.h"
-
+#include <unistd.h>
 #include "sense.h"
-#include "unistd.h"
+#include <stdbool.h>
 
-#define WHITE 0xFFFF
 #define GREEN 0x7E0
 #define BLACK 0x0000
 #define BLUE 0x1F
-#define RED 0xF800
 
 
-//define functions here:
-void open_display(void);
 
-void assign_pixel(int newArr[], int z,int time_amount) {
-    //pi_framebuffer_t *fb=getFrameBuffer();
-    //sense_fb_bitmap_t *bm=fb->bitmap;
- 
- if (time_amount == 32) {
-                newArr[z] = 2; //2nd column: bm->pixel[x][2]=COLOR;
+
+void assign_pixel(sense_fb_bitmap_t *bm, int time_amount, int x, int COLOR) { 
+    if (time_amount == 32) {
+                bm->pixel[x][2]=COLOR;
             }
             else if (time_amount == 16) {
-                newArr[z] = 3;
+                bm->pixel[x][3]=COLOR;
             }
 
             else if (time_amount == 8) {
-                newArr[z] = 4;
+                bm->pixel[x][4]=COLOR;
             }
 
             else if (time_amount == 4) {
-                newArr[z] = 5;
+                bm->pixel[x][5]=COLOR;
             }
 
             else if (time_amount == 2) {
-                newArr[z] = 6;
+                bm->pixel[x][6]=COLOR;
             }
 
             else if (time_amount == 1) {
-                newArr[z] = 7;
-            }	    //sleep(1);
-	    //freeFrameBuffer(fb);
+                bm->pixel[x][7]=COLOR;
+            }
 }
 
-void display_pixels(pi_framebuffer_t *fb,int x, int newArr[], int COLOR, int column) {
-
-sense_fb_bitmap_t *bm=fb->bitmap;
-
-//Take {3,0,0,0,0,0} and make
-
-  for (int i = 0; i < x; i++) { //Run a loop 6 times 
-
-        if (newArr[i] == 0) {
-            break;
-        }
-
-        bm->pixel[column][newArr[i]]=COLOR;
-
-    }
-sleep(1);
-bm->pixel[1][6]=BLUE;
-
-}
-//Draws white boxes
-//void display_colons(void);
-
-void display_hours(int hours) {
+void display_hours(sense_fb_bitmap_t *bm, int hours) {
 
     int arr[] = {32, 16, 8, 4, 2, 1};
-    int newArr[] = {0,0,0,0,0,0}; //This is used as a placeholder for the y values of pixels. Not all values will necessarily be used
-    int z = 0;
-    bool looping = true;
 
+    bool looping = true;
 
     int i = 0;
     while(looping) {
-        //Stop the loop when the amount of time has nothing left to divide
+        //Stop the loop when the amount of time has nothing left to divide.
         if (hours == 0) {
             looping = false;
             break;
         }
-
+        printf("arr[i]=%d", arr[i]);
         if (arr[i] <= hours) { //If arr[i] fits into the amount of time, subtract arr[i] from hours
-            assign_pixel(newArr, z, hours); //CHANGE THE NEXT 0 OF newArr to 3 
-		//newArr = {3, 0, 0, 0, 0, 0}
+            assign_pixel(bm, arr[i], 6, BLUE); //Make blue pixels on column 6
             hours = hours - arr[i];
-        }
-        i++; //Loop should restart at this point unless hours has hit 0.
-        z++;
+        } //Loop should restart at this point unless hours has hit 0.
+     i++;
     }
-//Assign all the pixels at once time HERE:
-display_pixels(6, newArr, BLUE, 6);
-
-    //END OF FUNCTION
-}
-
-//void display_minutes(int minutes);
-
-//void display_seconds(int seconds);
-/*
-void display_time(int hours, int minutes, int seconds) {
-
-display_colons();
-
-display_hours(hours);
-
-display_minutes(minutes);
-
-display_seconds(seconds);
 
 }
-*/
-void main(void) {
-pi_framebuffer_t *fb=getFrameBuffer();
-display_hours(24);
-freeFrameBuffer(fb);
+
+
+
+int main(void) {
+    pi_framebuffer_t *fb=getFrameBuffer();
+    sense_fb_bitmap_t *bm=fb->bitmap;
+    int input = 0;
+    printf("Enter hours here:\n");
+    scanf("%d",&input);
+    display_hours(bm,input);
+    sleep(1);
+
+    freeFrameBuffer(fb);
+    return 0;
 }
-void close_display(void);
+
