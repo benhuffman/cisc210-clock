@@ -2,6 +2,7 @@
 #include <unistd.h>
 #include "sense.h"
 #include <stdbool.h>
+#include "display.h"
 
 #define GREEN 0x7E0
 #define BLACK 0x0000
@@ -134,9 +135,19 @@ void display_seconds(sense_fb_bitmap_t *bm, int secs) {
     }
 }
 
+void display_time(sense_fb_bitmap_t *bm, int hours, int minutes, int seconds) {
 
+    display_colons(bm);
 
-int main(void) {
+    display_hours(bm,hours);
+
+    display_minutes(bm, minutes);
+
+    display_seconds(bm, seconds);
+
+}
+
+int open_display(void) {
     pi_framebuffer_t *fb=getFrameBuffer();
     sense_fb_bitmap_t *bm=fb->bitmap;
     int inputHours = 0;
@@ -152,12 +163,7 @@ int main(void) {
     printf("Seconds:\n");
     scanf("%d",&inputSeconds);
 
-    display_colons(bm);
-    display_hours(bm,inputHours);
-
-    display_minutes(bm, inputMinutes);
-
-    display_seconds(bm, inputSeconds);
+    display_time(bm, inputHours, inputMinutes, inputSeconds);
     sleep(1);
 
     freeFrameBuffer(fb);

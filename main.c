@@ -1,16 +1,15 @@
 #include "display.h"
 
 int main(void) {
-    pi_framebuffer_t *fb=getFrameBuffer();
-    fprintf(stderr,"Going to print a sigma!\n");
-
-  //  display_sigma(fb);
-    sleep(5);
+//    pi_framebuffer_t *fb=getFrameBuffer();
+	open_display();
+/*
     fprintf(stderr,"Did it!\n");
     clearFrameBuffer(fb,0);
     sleep(1);
     freeFrameBuffer(fb);
     fprintf(stderr,"Exiting.\n");
+*/
     return 0;
 }
 
