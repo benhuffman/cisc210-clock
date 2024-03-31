@@ -10,7 +10,7 @@
 #define RED 0xF800
 #define WHITE 0xFFFF
 
-void display_colons(sense_fb_bitmap_t *bm) {
+void display_colons(pi_framebuffer_t *fb, sense_fb_bitmap_t *bm) {
 
         //top left square
         bm->pixel[5][1]=WHITE;
@@ -40,7 +40,7 @@ void display_colons(sense_fb_bitmap_t *bm) {
 
 }
 
-void assign_pixel(sense_fb_bitmap_t *bm, int time_amount, int x, int COLOR) { 
+void assign_pixel(pi_framebuffer_t *fb, sense_fb_bitmap_t *bm, int time_amount, int x, int COLOR) { 
     if (time_amount == 32) {
                 bm->pixel[x][2]=COLOR;
             }
@@ -65,7 +65,7 @@ void assign_pixel(sense_fb_bitmap_t *bm, int time_amount, int x, int COLOR) {
             }
 }
 
-void display_hours(sense_fb_bitmap_t *bm, int hours) {
+void display_hours(pi_framebuffer_t *fb, sense_fb_bitmap_t *bm, int hours) {
 
     int arr[] = {32, 16, 8, 4, 2, 1};
 
@@ -80,7 +80,7 @@ void display_hours(sense_fb_bitmap_t *bm, int hours) {
         }
 
         if (arr[i] <= hours) { //If arr[i] fits into the amount of time, subtract arr[i] from hours
-            assign_pixel(bm, arr[i], 6, BLUE); //Make blue pixels on column 6
+            assign_pixel(fb, bm, arr[i], 6, BLUE); //Make blue pixels on column 6
             hours = hours - arr[i];
         } //Loop should restart at this point unless hours has hit 0.
      i++;
@@ -89,7 +89,7 @@ void display_hours(sense_fb_bitmap_t *bm, int hours) {
 }
 
 
-void display_minutes(sense_fb_bitmap_t *bm, int mins) {
+void display_minutes(pi_framebuffer_t *fb, sense_fb_bitmap_t *bm, int mins) {
 
     int arr[] = {32, 16, 8, 4, 2, 1};
 
@@ -104,7 +104,7 @@ void display_minutes(sense_fb_bitmap_t *bm, int mins) {
         }
 
         if (arr[i] <= mins) { //If arr[i] fits into the amount of time, subtract arr[i] from hours
-            assign_pixel(bm, arr[i], 3, GREEN); //Make blue pixels on column 6
+            assign_pixel(fb, bm, arr[i], 3, GREEN); //Make blue pixels on column 6
             mins = mins - arr[i];
         } //Loop should restart at this point unless hours has hit 0.
      i++;
@@ -113,7 +113,7 @@ void display_minutes(sense_fb_bitmap_t *bm, int mins) {
 }
 
 
-void display_seconds(sense_fb_bitmap_t *bm, int secs) {
+void display_seconds(pi_framebuffer_t *fb, sense_fb_bitmap_t *bm, int secs) {
 
     int arr[] = {32, 16, 8, 4, 2, 1};
 
@@ -128,24 +128,21 @@ void display_seconds(sense_fb_bitmap_t *bm, int secs) {
         }
 
         if (arr[i] <= secs) { //If arr[i] fits into the amount of time, subtract arr[i] from hours
-            assign_pixel(bm, arr[i], 0, RED); //Make blue pixels on column 6
+            assign_pixel(fb, bm, arr[i], 0, RED); //Make blue pixels on column 6
             secs = secs - arr[i];
         } //Loop should restart at this point unless hours has hit 0.
      i++;
     }
 }
 
-void display_time(sense_fb_bitmap_t *bm, int hours, int minutes, int seconds) {
-printf("%d hours", hours);
-printf("%d minutes", minutes);
-printf("%d seconds", seconds);
-    display_colons(bm);
+void display_time(pi_framebuffer_t *fb, sense_fb_bitmap_t *bm, int hours, int minutes, int seconds) {
+    display_colons(fb, bm);
 
-    display_hours(bm,hours);
+    display_hours(fb, bm,hours);
 
-    display_minutes(bm, minutes);
+    display_minutes(fb, bm, minutes);
 
-    display_seconds(bm, seconds);
+    display_seconds(fb, bm, seconds);
 
 }
 
@@ -194,7 +191,7 @@ int open_display(void) {
     int minutes = convert_input(inputMinutes);
     int seconds = convert_input(inputSeconds);
 
-    display_time(bm, hours, minutes, seconds);
+    display_time(fb,bm, hours, minutes, seconds);
 
     }//END OF WHILE LOOP
 
