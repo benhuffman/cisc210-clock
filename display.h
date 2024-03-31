@@ -19,6 +19,8 @@ void display_minutes(sense_fb_bitmap_t *bm, int mins);
 
 void display_seconds(sense_fb_bitmap_t *bm, int secs);
 
+int convert_input(char inputTime[]);
+
 void display_time(sense_fb_bitmap_t *bm, int hours, int minutes, int seconds);
 
 int open_display(void);
