@@ -161,7 +161,7 @@ int convert_input(char inputTime[]){
               else {
                   time += (inputTime[i] - '0');
               }
-              i++;
+
          } //End of loop
 
      return time;
@@ -176,8 +176,10 @@ int open_display(void) {
     bool looping2 = true;
 
     while (looping2) {
-printf("This.\n");
+
     scanf("%[^:]:%[^:]:%s",inputHours, inputMinutes, inputSeconds);
+//    clearFrameBuffer(fb,BLACK);
+  //  sleep(1);
 
 /*
     if (userInput < 3) {
