@@ -65,28 +65,6 @@ void assign_pixel(pi_framebuffer_t *fb, sense_fb_bitmap_t *bm, int time_amount, 
             }
 }
 
-void display_hours(pi_framebuffer_t *fb, sense_fb_bitmap_t *bm, int hours) {
-
-    int arr[] = {32, 16, 8, 4, 2, 1};
-
-    bool looping = true;
-
-    int i = 0;
-    while(looping) {
-        //Stop the loop when the amount of time has nothing left to divide.
-        if (hours == 0) {
-            looping = false;
-            break;
-        }
-
-        if (arr[i] <= hours) { //If arr[i] fits into the amount of time, subtract arr[i] from hours
-            assign_pixel(fb, bm, arr[i], 6, BLUE); //Make blue pixels on column 6
-            hours = hours - arr[i];
-        } //Loop should restart at this point unless hours has hit 0.
-     i++;
-    }
-
-}
 
 
 void display_minutes(pi_framebuffer_t *fb, sense_fb_bitmap_t *bm, int mins) {
@@ -115,7 +93,7 @@ void display_minutes(pi_framebuffer_t *fb, sense_fb_bitmap_t *bm, int mins) {
 
 void display_seconds(pi_framebuffer_t *fb, sense_fb_bitmap_t *bm, int secs) {
 
-    int arr[] = {32, 16, 8, 4, 2, 1};
+    int arr[7] = {32, 16, 8, 4, 2, 1};
 
     bool looping = true;
 
@@ -135,19 +113,42 @@ void display_seconds(pi_framebuffer_t *fb, sense_fb_bitmap_t *bm, int secs) {
     }
 }
 
+
+
+void display_hours(pi_framebuffer_t *fb, sense_fb_bitmap_t *bm, int secs) {
+
+    int arr[] = {32, 16, 8, 4, 2, 1};
+
+    bool looping = true;
+
+    int i = 0;
+    while(looping) {
+        //Stop the loop when the amount of time has nothing left to divide.
+        if (secs == 0) {
+            looping = false;
+            break;
+        }
+
+        if (arr[i] <= secs) { //If arr[i] fits into the amount of time, subtract arr[i] from hours
+            assign_pixel(fb, bm, arr[i], 6, BLUE); //Make blue pixels on column 6
+            secs = secs - arr[i];
+        } //Loop should restart at this point unless hours has hit 0.
+     i++;
+    }
+}
+
+
 void display_time(pi_framebuffer_t *fb, sense_fb_bitmap_t *bm, int hours, int minutes, int seconds) {
     display_colons(fb, bm);
 
-    display_hours(fb, bm,hours);
+    display_hours(fb, bm, hours);
 
     display_minutes(fb, bm, minutes);
 
     display_seconds(fb, bm, seconds);
-
 }
 
 int convert_input(char inputTime[]){
-    printf("convert_input()\n");
     int time;
 
              for (int i = 0; i < 2; i++) {
@@ -167,16 +168,21 @@ int convert_input(char inputTime[]){
 int open_display(void) {
     pi_framebuffer_t *fb=getFrameBuffer();
     sense_fb_bitmap_t *bm=fb->bitmap;
-    char inputHours[] = "00";
-    char inputMinutes[] = "00";
-    char inputSeconds[] = "00";
-    bool looping2 = true;
 
-    while (looping2) {
+    bool looping = true;
 
-    scanf("%[^:]:%[^:]:%s",inputHours, inputMinutes, inputSeconds);
-//    clearFrameBuffer(fb,BLACK);
-  //  sleep(1);
+    while (looping) {
+
+    char inputHours[3];
+    char inputMinutes[3];
+    char inputSeconds[3];
+
+    char input[9];
+
+    scanf("%8s", input);
+    sscanf(input, "%2s:%2s:%2s",inputHours, inputMinutes, inputSeconds);
+
+    clearFrameBuffer(fb,BLACK);
 
 /*
     if (userInput < 3) {
@@ -187,11 +193,17 @@ int open_display(void) {
 
 */
 
-    int hours = convert_input(inputHours);
-    int minutes = convert_input(inputMinutes);
-    int seconds = convert_input(inputSeconds);
+    int hours = 0;
+    int minutes = 0;
+    int seconds = 0;
 
+
+    //Change strings to integers
+    hours = convert_input(inputHours);
+    minutes = convert_input(inputMinutes);
+    seconds = convert_input(inputSeconds);
     display_time(fb,bm, hours, minutes, seconds);
+
 
     }//END OF WHILE LOOP
 
@@ -199,4 +211,5 @@ int open_display(void) {
     freeFrameBuffer(fb);
     return 0;
 }
+
 
